@@ -16,148 +16,148 @@
 
 /* ANSI C function prototype definitions */
 
-int processFile(char *);
+int16_t processFile(char *);
 
-int assemble(char *, int *);
+int16_t assemble(char *, int16_t *);
 
-int pickMask(int, flavor *, int *);
+int16_t pickMask(int16_t, flavor *, int16_t *);
 
-int move(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t move(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int zeroOp(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t zeroOp(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int oneOp(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t oneOp(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int arithReg(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t arithReg(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int arithAddr(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t arithAddr(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int immedInst(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t immedInst(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int quickMath(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t quickMath(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int movep(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t movep(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int moves(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t moves(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int moveReg(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t moveReg(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int staticBit(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t staticBit(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int movec(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t movec(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int trap(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t trap(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int branch(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t branch(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int moveq(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t moveq(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int immedToCCR(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t immedToCCR(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int immedWord(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t immedWord(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int dbcc(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t dbcc(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int scc(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t scc(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int shiftReg(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t shiftReg(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int exg(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t exg(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int twoReg(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t twoReg(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int oneReg(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t oneReg(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int moveUSP(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t moveUSP(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int link(int, int, opDescriptor *, opDescriptor *, int *);
+int16_t link(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
 
-int output(long, int);
+int16_t output(int32_t, int16_t);
 
-int effAddr(opDescriptor *);
+int16_t effAddr(opDescriptor *);
 
-int extWords(opDescriptor *, int, int *);
+int16_t extWords(opDescriptor *, int16_t, int16_t *);
 
 #ifdef ORG_DIRECTIVE
-int org(int, char *, char *, int *);
+int16_t org(int16_t, char *, char *, int16_t *);
 #endif
 
-int funct_end(int, char *, char *, int *);
+int16_t funct_end(int16_t, char *, char *, int16_t *);
 
-int equ(int, char *, char *, int *);
+int16_t equ(int16_t, char *, char *, int16_t *);
 
-int set(int, char *, char *, int *);
+int16_t set(int16_t, char *, char *, int16_t *);
 
-int dc(int, char *, char *, int *);
+int16_t dc(int16_t, char *, char *, int16_t *);
 
 char *collect(char *, char *);
 
-int dcb(int, char *, char *, int *);
+int16_t dcb(int16_t, char *, char *, int16_t *);
 
-int ds(int, char *, char *, int *);
+int16_t ds(int16_t, char *, char *, int16_t *);
 
-int printError(FILE *, int, int);
+int16_t printError(FILE *, int16_t, int16_t);
 
-char *eval(char *, long *, char *, int *);
+char *eval(char *, int32_t *, char *, int16_t *);
 
-char *evalNumber(char *, long *, char *, int *);
+char *evalNumber(char *, int32_t *, char *, int16_t *);
 
-int precedence(char);
+int16_t precedence(char);
 
-int doOp(long, long, char, long *);
+int16_t doOp(int32_t, int32_t, char, int32_t *);
 
-char *instLookup(char *, instruction *(*), char *, int *);
+char *instLookup(char *, instruction *(*), char *, int16_t *);
 
-int initList(char *);
+int16_t initList(char *);
 
-int listLine(void);
+int16_t listLine(void);
 
-int listLoc(void);
+int16_t listLoc(void);
 
-int listObj(long, int);
+int16_t listObj(int32_t, int16_t);
 
-int main(int, char *[]);
+int16_t main(int16_t, char *[]);
 
-int strcap(char *, char *);
+int16_t strcap(char *, char *);
 
 char *skipSpace(char *);
 
-int getopt(int, char *[], char *, int *);
+int16_t getopt(int16_t, char *[], char *, int16_t *);
 
-int help(void);
+int16_t help(void);
 
-int movem(int, char *, char *, int *);
+int16_t movem(int16_t, char *, char *, int16_t *);
 
-int reg(int, char *, char *, int *);
+int16_t reg(int16_t, char *, char *, int16_t *);
 
-char *evalList(char *, unsigned short *, int *);
+char *evalList(char *, uint16_t *, int16_t *);
 
-int initObj(char *);
+int16_t initObj(char *);
 
-int outputObj(long, long, int);
+int16_t outputObj(int32_t, int32_t, int16_t);
 
-long checkValue(long);
+int32_t checkValue(int32_t);
 
-int finishObj(void);
+int16_t finishObj(void);
 
-char *opParse(char *, opDescriptor *, int *);
+char *opParse(char *, opDescriptor *, int16_t *);
 
-symbolDef *lookup(char *, int, int *);
+symbolDef *lookup(char *, int16_t, int16_t *);
 
-int hash(char *);
+int16_t hash(char *);
 
-symbolDef *define(char *, long, int, int *);
+symbolDef *define(char *, int32_t, int16_t, int16_t *);
 
-int writeObj(void);
+int16_t writeObj(void);
 
-int CodeDirective(int size, char *label, char *op, int *errorPtr);
-int DataDirective(int size, char *label, char *op, int *errorPtr);
-int ResDirective(int size, char *label, char *op, int *errorPtr);
-int IncludeDirective(int size, char *label, char *op, int *errorPtr);
-int ApplDirective(int size, char *label, char *op, int *errorPtr);
-FILE *PushSourceFile(const char *pszNewSource, int *errorPtr);
-int PopSourceFile();
-int AlignDirective(int size, char *label, char *op, int *errorPtr);
-int ListDirective(int size, char *label, char *op, int *errorPtr);
+int16_t CodeDirective(int16_t size, char *label, char *op, int16_t *errorPtr);
+int16_t DataDirective(int16_t size, char *label, char *op, int16_t *errorPtr);
+int16_t ResDirective(int16_t size, char *label, char *op, int16_t *errorPtr);
+int16_t IncludeDirective(int16_t size, char *label, char *op, int16_t *errorPtr);
+int16_t ApplDirective(int16_t size, char *label, char *op, int16_t *errorPtr);
+FILE *PushSourceFile(const char *pszSourcePath, const char *pszNewSource, int16_t *errorPtr);
+int16_t PopSourceFile();
+int16_t AlignDirective(int16_t size, char *label, char *op, int16_t *errorPtr);
+int16_t ListDirective(int16_t size, char *label, char *op, int16_t *errorPtr);
 
 #endif /* __PROTO_H__ */

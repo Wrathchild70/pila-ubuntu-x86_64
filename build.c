@@ -14,14 +14,14 @@
  *		follows:
  *
  *		    general_name(mask, size, source, dest, errorPtr);
- *		    int mask, size;
+ *		    int16_t mask, size;
  *		    opDescriptor *source, *dest;
- *		    int *errorPtr;
+ *		    int16_t *errorPtr;
  *
  *		except
  *
  *		    zeroOp(mask, size, errorPtr);
- *		    int mask, size, *errorPtr;
+ *		    int16_t mask, size, *errorPtr;
  *
  *		The mask argument is the skeleton mask for the
  *		instruction, i.e., the instruction word before the
@@ -45,7 +45,7 @@
 #include "pila.h"
 #include "asm.h"
 
-extern long gulOutLoc;
+extern int32_t gulOutLoc;
 extern char gfPass2;
 
 
@@ -55,10 +55,10 @@ extern char gfPass2;
  *
  ***********************************************************************/
 
-int move(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t move(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
-    unsigned short moveMask;
+    uint16_t moveMask;
     char destCode;
 
     /* Check whether the instruction can be assembled as MOVEQ */
@@ -74,7 +74,7 @@ int move(int mask, int size, opDescriptor *source, opDescriptor *dest,
     destCode = (char) (effAddr(dest) & 0xff);
     moveMask |= (destCode & 0x38) << 3 | (destCode & 7) << 9;
     if (gfPass2)
-        output((long) (moveMask), WORD);
+        output((int32_t) (moveMask), WORD);
     gulOutLoc += 2;
     extWords(source, size, errorPtr);
     extWords(dest, size, errorPtr);
@@ -96,11 +96,11 @@ int move(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int zeroOp(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t zeroOp(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
-        output((long) (mask), WORD);
+        output((int32_t) (mask), WORD);
     gulOutLoc += 2;
 
     return NORMAL;
@@ -129,11 +129,11 @@ int zeroOp(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int oneOp(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t oneOp(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
-        output((long) (mask | effAddr(source)), WORD);
+        output((int32_t) (mask | effAddr(source)), WORD);
     gulOutLoc += 2;
     extWords(source, size, errorPtr);
 
@@ -161,11 +161,11 @@ int oneOp(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int arithReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t arithReg(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
-        output((long) (mask | effAddr(source) | (dest->reg << 9)), WORD);
+        output((int32_t) (mask | effAddr(source) | (dest->reg << 9)), WORD);
     gulOutLoc += 2;
     extWords(source, size, errorPtr);
 
@@ -188,11 +188,11 @@ int arithReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int arithAddr(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t arithAddr(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
-        output((long) (mask | effAddr(dest) | (source->reg << 9)), WORD);
+        output((int32_t) (mask | effAddr(dest) | (source->reg << 9)), WORD);
     gulOutLoc += 2;
     extWords(dest, size, errorPtr);
 
@@ -212,10 +212,10 @@ int arithAddr(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int immedInst(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t immedInst(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
-    unsigned short type;
+    uint16_t type;
 
     /* Check whether the instruction is an immediate ADD or SUB
            that can be assembled as ADDQ or SUBQ */
@@ -237,7 +237,7 @@ int immedInst(int mask, int size, opDescriptor *source, opDescriptor *dest,
 
     /* Otherwise assemble as an ordinary instruction */
     if (gfPass2)
-        output((long) (mask | effAddr(dest)), WORD);
+        output((int32_t) (mask | effAddr(dest)), WORD);
     gulOutLoc += 2;
     extWords(source, size, errorPtr);
     extWords(dest, size, errorPtr);
@@ -254,11 +254,11 @@ int immedInst(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int quickMath(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t quickMath(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
-        output((long) (mask | effAddr(dest) | ((source->data & 7) << 9)), WORD);
+        output((int32_t) (mask | effAddr(dest) | ((source->data & 7) << 9)), WORD);
         if (source->data < 1 || source->data > 8)
             NEWERROR(*errorPtr, INV_QUICK_CONST);
     }
@@ -275,8 +275,8 @@ int quickMath(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int movep(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t movep(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
         if (source->mode == DnDirect) {
@@ -286,7 +286,7 @@ int movep(int mask, int size, opDescriptor *source, opDescriptor *dest,
                 dest->mode = AnIndDisp;
                 dest->data = 0;
             }
-            output((long) (mask | (source->reg << 9) | (dest->reg)), WORD);
+            output((int32_t) (mask | (source->reg << 9) | (dest->reg)), WORD);
             gulOutLoc += 2;
             extWords(dest, size, errorPtr);
         } else {
@@ -296,7 +296,7 @@ int movep(int mask, int size, opDescriptor *source, opDescriptor *dest,
                 source->mode = AnIndDisp;
                 source->data = 0;
             }
-            output((long) (mask | (dest->reg << 9) | (source->reg)), WORD);
+            output((int32_t) (mask | (dest->reg << 9) | (source->reg)), WORD);
             gulOutLoc += 2;
             extWords(source, size, errorPtr);
         } else
@@ -312,25 +312,25 @@ int movep(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int moves(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t moves(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
         if (source->mode & (DnDirect | AnDirect)) {
-            output((long) (mask | effAddr(dest)), WORD);
+            output((int32_t) (mask | effAddr(dest)), WORD);
             gulOutLoc += 2;
             if (source->mode == DnDirect)
-                output((long) (0x0800 | (source->reg << 12)), WORD);
+                output((int32_t) (0x0800 | (source->reg << 12)), WORD);
             else
-                output((long) (0x8800 | (source->reg << 12)), WORD);
+                output((int32_t) (0x8800 | (source->reg << 12)), WORD);
             gulOutLoc += 2;
         } else {
-            output((long) mask | effAddr(source), WORD);
+            output((int32_t) mask | effAddr(source), WORD);
             gulOutLoc += 2;
             if (dest->mode == DnDirect)
-                output((long) (dest->reg << 12), WORD);
+                output((int32_t) (dest->reg << 12), WORD);
             else
-                output((long) (0x8000 | (dest->reg << 12)), WORD);
+                output((int32_t) (0x8000 | (dest->reg << 12)), WORD);
             gulOutLoc += 2;
         } else
         gulOutLoc += 4;
@@ -349,11 +349,11 @@ int moves(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int moveReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t moveReg(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
-        output((long) (mask | effAddr(dest)), WORD);
+        output((int32_t) (mask | effAddr(dest)), WORD);
     gulOutLoc += 2;
     extWords(dest, size, errorPtr);
 
@@ -371,11 +371,11 @@ int moveReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int staticBit(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t staticBit(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
-        output((long) (mask | effAddr(dest)), WORD);
+        output((int32_t) (mask | effAddr(dest)), WORD);
         gulOutLoc += 2;
         output(source->data & 0xFF, WORD);
         gulOutLoc += 2;
@@ -393,15 +393,15 @@ int staticBit(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int movec(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t movec(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
-    unsigned short mask2;
+    uint16_t mask2;
     opDescriptor *regOp;
-    long    controlMode;
+    int32_t    controlMode;
 
     if (gfPass2) {
-        output((long) (mask), WORD);
+        output((int32_t) (mask), WORD);
         gulOutLoc += 2;
         if (mask & 1) {
             regOp = source;
@@ -421,7 +421,7 @@ int movec(int mask, int size, opDescriptor *source, opDescriptor *dest,
             mask2 |= 0x800;
         else if (controlMode == VBRDirect)
             mask2 |= 0x801;
-        output((long) (mask2), WORD);
+        output((int32_t) (mask2), WORD);
         gulOutLoc += 2;
     } else
         gulOutLoc += 4;
@@ -436,8 +436,8 @@ int movec(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int trap(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t trap(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
         output(mask | (source->data & 0xF), WORD);
@@ -460,11 +460,11 @@ int trap(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int branch(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t branch(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     char    shortDisp;
-    long    disp;
+    int32_t    disp;
 
     disp = source->data - gulOutLoc - 2;
     shortDisp = FALSE;
@@ -473,14 +473,14 @@ int branch(int mask, int size, opDescriptor *source, opDescriptor *dest,
         shortDisp = TRUE;
     if (gfPass2) {
         if (shortDisp) {
-            output((long) (mask | (disp & 0xFF)), WORD);
+            output((int32_t) (mask | (disp & 0xFF)), WORD);
             gulOutLoc += 2;
             if (disp < -128 || disp > 127 || !disp)
                 NEWERROR(*errorPtr, INV_BRANCH_DISP);
         } else {
-            output((long) (mask), WORD);
+            output((int32_t) (mask), WORD);
             gulOutLoc += 2;
-            output((long) (disp), WORD);
+            output((int32_t) (disp), WORD);
             gulOutLoc += 2;
             if (disp < -32768 || disp > 32767)
                 NEWERROR(*errorPtr, INV_BRANCH_DISP);
@@ -498,8 +498,8 @@ int branch(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int moveq(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t moveq(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
         output(mask | (dest->reg << 9) | (source->data & 0xFF), WORD);
@@ -521,11 +521,11 @@ int moveq(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int immedToCCR(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t immedToCCR(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
-        output((long) (mask), WORD);
+        output((int32_t) (mask), WORD);
         gulOutLoc += 2;
         output(source->data & 0xFF, WORD);
         gulOutLoc += 2;
@@ -549,11 +549,11 @@ int immedToCCR(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int immedWord(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t immedWord(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
-        output((long) (mask), WORD);
+        output((int32_t) (mask), WORD);
         gulOutLoc += 2;
         output(source->data & 0xFFFF, WORD);
         gulOutLoc += 2;
@@ -576,16 +576,16 @@ int immedWord(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int dbcc(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t dbcc(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
-    short disp;
+    int16_t disp;
 
-    disp = (short int) (dest->data - gulOutLoc - 2);
+    disp = (int16_t) (dest->data - gulOutLoc - 2);
     if (gfPass2) {
-        output((long) (mask | source->reg), WORD);
+        output((int32_t) (mask | source->reg), WORD);
         gulOutLoc += 2;
-        output((long) (disp), WORD);
+        output((int32_t) (disp), WORD);
         gulOutLoc += 2;
         if (disp < -32768 || disp > 32767)
             NEWERROR(*errorPtr, INV_BRANCH_DISP);
@@ -606,11 +606,11 @@ int dbcc(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int scc(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t scc(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2)
-        output((long) (mask | effAddr(source)), WORD);
+        output((int32_t) (mask | effAddr(source)), WORD);
     gulOutLoc += 2;
     extWords(source, size, errorPtr);
 
@@ -632,8 +632,8 @@ int scc(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int shiftReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t shiftReg(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
         mask |= dest->reg;
@@ -643,7 +643,7 @@ int shiftReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
                 NEWERROR(*errorPtr, INV_SHIFT_COUNT);
         } else
             mask |= source->reg << 9;
-        output((long) (mask), WORD);
+        output((int32_t) (mask), WORD);
     }
     gulOutLoc += 2;
 
@@ -657,8 +657,8 @@ int shiftReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int exg(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t exg(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
         /* Are a data register and an address register being exchanged? */
@@ -671,7 +671,7 @@ int exg(int mask, int size, opDescriptor *source, opDescriptor *dest,
         else
             /* Otherwise it doesn't matter which way they go */
             mask |= dest->reg | (source->reg << 9);
-        output((long) (mask), WORD);
+        output((int32_t) (mask), WORD);
     }
     gulOutLoc += 2;
 
@@ -690,11 +690,11 @@ int exg(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int twoReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t twoReg(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
-        output((long) (mask | (dest->reg << 9) | source->reg), WORD);
+        output((int32_t) (mask | (dest->reg << 9) | source->reg), WORD);
     }
     gulOutLoc += 2;
 
@@ -711,11 +711,11 @@ int twoReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int oneReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t oneReg(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
-        output((long) (mask | source->reg), WORD);
+        output((int32_t) (mask | source->reg), WORD);
     }
     gulOutLoc += 2;
 
@@ -731,14 +731,14 @@ int oneReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int moveUSP(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t moveUSP(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
         if (source->mode == AnDirect)
-            output((long) (mask | source->reg), WORD);
+            output((int32_t) (mask | source->reg), WORD);
         else
-            output((long) (mask | dest->reg), WORD);
+            output((int32_t) (mask | dest->reg), WORD);
     }
     gulOutLoc += 2;
 
@@ -752,11 +752,11 @@ int moveUSP(int mask, int size, opDescriptor *source, opDescriptor *dest,
  *
  ***********************************************************************/
 
-int link(int mask, int size, opDescriptor *source, opDescriptor *dest,
-        int *errorPtr)
+int16_t link(int16_t mask, int16_t size, opDescriptor *source, opDescriptor *dest,
+        int16_t *errorPtr)
 {
     if (gfPass2) {
-        output((long) (mask | source->reg), WORD);
+        output((int32_t) (mask | source->reg), WORD);
         gulOutLoc += 2;
         output(dest->data, WORD);
         gulOutLoc += 2;

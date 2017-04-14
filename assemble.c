@@ -32,7 +32,7 @@
  *
  *		assemble(line, errorPtr)
  *		char *line;
- *		int *errorPtr;
+ *		int16_t *errorPtr;
  *
  *      Author: Paul McKee
  *		ECE492    North Carolina State University
@@ -50,20 +50,20 @@
 #include "pp.h"
 
 
-extern long gulOutLoc;      /* The assembler's location counter */
+extern int32_t gulOutLoc;      /* The assembler's location counter */
 extern char gfPass2;        /* Flag set during second pass */
 extern char endFlag;        /* Flag set when the END directive is encountered */
 extern char continuation;   /* TRUE if the listing line is a continuation */
 
-extern int errorCount, warningCount;
+extern int16_t errorCount, warningCount;
 
 extern char line[256];      /* Source line */
 extern FILE *gpfilList;     /* Listing file */
 
-int processFile(char *szFile)
+int16_t processFile(char *szFile)
 {
     char capLine[256];
-    int error;
+    int16_t error;
     char pass;
     MDL mdl;
     FILE *pfilInput;
@@ -89,7 +89,7 @@ int processFile(char *szFile)
         gbt = kbtCode;      // block is code unless otherwise specified
         gpbOutput = gpbCode;
 
-        pfilInput = PushSourceFile(szFile, NULL);
+        pfilInput = PushSourceFile(szFile, NULL, NULL);
         if (pfilInput == NULL || pfilInput == (FILE *)-1) {
             fputs("Input file not found\n", stdout);
             exit(0);
@@ -136,13 +136,13 @@ int processFile(char *szFile)
 }
 
 
-int assemble(char *line, int *errorPtr)
+int16_t assemble(char *line, int16_t *errorPtr)
 {
     instruction *tablePtr;
     flavor *flavorPtr;
     opDescriptor source, dest;
     char *p, *start, label[SIGCHARS+1], size, f, sourceParsed, destParsed;
-    unsigned short mask, i;
+    uint16_t mask, i;
 
     p = start = skipSpace(line);
 
@@ -238,27 +238,27 @@ int assemble(char *line, int *errorPtr)
                 }
 
                 if (!flavorPtr->source) {
-                    mask = pickMask( (int) size, flavorPtr, errorPtr);
-                    (*flavorPtr->exec)(mask, (int) size, &source, &dest, errorPtr);
+                    mask = pickMask( (int16_t) size, flavorPtr, errorPtr);
+                    (*flavorPtr->exec)(mask, (int16_t) size, &source, &dest, errorPtr);
                     return NORMAL;
                 } else if ((source.mode & flavorPtr->source) && !flavorPtr->dest) {
                     if (!isspace(*p) && *p) {
                         NEWERROR(*errorPtr, SYNTAX);
                         return NORMAL;
                     }
-                    mask = pickMask( (int) size, flavorPtr, errorPtr);
-                    (*flavorPtr->exec)(mask, (int) size, &source, &dest, errorPtr);
+                    mask = pickMask( (int16_t) size, flavorPtr, errorPtr);
+                    (*flavorPtr->exec)(mask, (int16_t) size, &source, &dest, errorPtr);
                     return NORMAL;
                 } else if (source.mode & flavorPtr->source &&
                            dest.mode & flavorPtr->dest) {
-                    mask = pickMask( (int) size, flavorPtr, errorPtr);
-                    (*flavorPtr->exec)(mask, (int) size, &source, &dest, errorPtr);
+                    mask = pickMask( (int16_t) size, flavorPtr, errorPtr);
+                    (*flavorPtr->exec)(mask, (int16_t) size, &source, &dest, errorPtr);
                     return NORMAL;
                 }
             }
             NEWERROR(*errorPtr, INV_ADDR_MODE);
         } else {
-            (*tablePtr->exec)( (int) size, label, p, errorPtr);
+            (*tablePtr->exec)( (int16_t) size, label, p, errorPtr);
             return NORMAL;
         }
     }
@@ -267,7 +267,7 @@ int assemble(char *line, int *errorPtr)
 }
 
 
-int pickMask(int size, flavor *flavorPtr, int *errorPtr)
+int16_t pickMask(int16_t size, flavor *flavorPtr, int16_t *errorPtr)
 {
     if (!size || size & flavorPtr->sizes)
         if (size & (BYTE | SHORT))

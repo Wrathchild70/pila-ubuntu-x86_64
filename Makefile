@@ -15,7 +15,7 @@ pila: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $+ $(LOADLIBES)
 
 %.o: %.c
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $+
+	$(CC) -g -c $(CPPFLAGS) $(CFLAGS) -o $@ $+
 
 clean:
 	rm -f $(OBJS) pila core

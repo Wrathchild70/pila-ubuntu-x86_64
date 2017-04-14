@@ -21,9 +21,9 @@
 #endif
 
 #ifdef unix
-typedef unsigned long DWORD;
-typedef long int LONG;
-typedef short int WORD;
+typedef uint32_t DWORD;
+typedef int32_t LONG;
+typedef int16_t WORD;
 typedef char BYTE;
 
 typedef struct {
@@ -57,31 +57,31 @@ typedef struct {
 /////////////////////////////////////////////////////////////////////////////
 
 extern char gfPass2;
-extern int gfResourcesOnly;
-extern long gcbResTotal;
-long gcbDataCompressed;
+extern int16_t gfResourcesOnly;
+extern int32_t gcbResTotal;
+int32_t gcbDataCompressed;
 
 #define kcbPrcMax	(512 * 1024)	// 512k should be plenty
 #define kcrmeMax	1000			// 1000 resources should be enough
 
-#define offsetof(s,m)  (ulong)&(((s *)0)->m)
+#define offsetof(s,m)  (uint32_t)&(((s *)0)->m)
 
 ResourceMapEntry garme[kcrmeMax];
-long gcrme;
+int32_t gcrme;
 byte gpbPrc[kcbPrcMax];
-long gcbPrc;
+int32_t gcbPrc;
 FourCC gfcAppId = 'TEMP';
 
 
-bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
-                  byte **ppbCompData, ulong *pcbCompData);
-bool ConvertResource(ulong ulTypeOriginal, byte *pbResData,
+BOOL CompressData(byte *pbData, uint32_t cbData, uint32_t cbUninitData,
+                  byte **ppbCompData, uint32_t *pcbCompData);
+BOOL ConvertResource(uint32_t ulTypeOriginal, byte *pbResData,
                      ResourceMapEntry *prme);
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool AddResource(FourCC fcType, ushort usId, byte *pbData, ulong cbData,
-                 bool fHead)
+BOOL AddResource(FourCC fcType, uint16_t usId, byte *pbData, uint32_t cbData,
+                 BOOL fHead)
 {
     ResourceMapEntry *prme;
 
@@ -124,18 +124,18 @@ bool AddResource(FourCC fcType, ushort usId, byte *pbData, ulong cbData,
 // *a5 = SysAppInfoPtr
 
 struct CodeZeroResource {
-    ulong cbA;      // Initialized data size
-    ulong cbB;      // Uninitialized data size
+    uint32_t cbA;      // Initialized data size
+    uint32_t cbB;      // Uninitialized data size
 } czr;
 
-long WritePrc(char *pszFileName, char *pszAppName, byte *pbCode, long cbCode,
-              byte *pbData, long cbData)
+int32_t WritePrc(char *pszFileName, char *pszAppName, byte *pbCode, int32_t cbCode,
+              byte *pbData, int32_t cbData)
 {
-    extern bool LayoutPrc(char *pszFilename, char *pszAppName);
-    bool fSuccess;
+    extern BOOL LayoutPrc(char *pszFilename, char *pszAppName);
+    BOOL fSuccess;
     FILE *pfilOut;
     char szName[_MAX_PATH];
-    long cbRes;
+    int32_t cbRes;
 
     if (!gfResourcesOnly) {
         //
@@ -217,14 +217,14 @@ byte abHeader4[] = {
 
 /////////////////////////////////////////////////////////////////////////////
 
-bool LayoutPrc(char *pszFilename, char *pszAppName)
+BOOL LayoutPrc(char *pszFilename, char *pszAppName)
 {
     extern FourCC gfcPrcType;
 
     byte *pbT, *pbResData;
     ResourceMapEntry *prme;
-    int i;
-    ulong ulT;
+    int16_t i;
+    uint32_t ulT;
 
     //
     // Here we go!
@@ -236,7 +236,7 @@ bool LayoutPrc(char *pszFilename, char *pszAppName)
 
     // Sneak "Pila" into the (most likely) unused app name space.
 
-    *(ulong *)&gpbPrc[28] = 'aliP';
+    *(uint32_t *)&gpbPrc[28] = 'aliP';
 
     // The first 32 bytes of a PRC is the filename.
 
@@ -269,15 +269,15 @@ bool LayoutPrc(char *pszFilename, char *pszAppName)
 
     memcpy(gpbPrc + 0x44, abHeader4, 6);
 
-    // Write the resource map.  Each entry is 10 bytes long in the format:
-    // FourCC type (4), ushort id (2), ulong ulOffset (4)
+    // Write the resource map.  Each entry is 10 bytes int32_t in the format:
+    // FourCC type (4), uint16_t id (2), uint32_t ulOffset (4)
 
     pbT = gpbPrc + 0x4e;
     pbResData = pbT + (10 * gcrme) + 2;
     prme = garme;
     for (i = 0; i < gcrme; i++, prme++) {
-        ushort usT;
-        ulong ulT;
+        uint16_t usT;
+        uint32_t ulT;
 
         // Copy the resource type to the resource map
 
@@ -298,7 +298,7 @@ bool LayoutPrc(char *pszFilename, char *pszAppName)
 
         memcpy(pbResData, prme->pbData, prme->cbData);
 
-        // Point to the next available resource map and data destination.
+        // Point16_t to the next available resource map and data destination.
 
         pbT += 10;
         pbResData += prme->cbData;
@@ -343,21 +343,21 @@ bool LayoutPrc(char *pszFilename, char *pszAppName)
 // | char[]: compressed CODE 1 xrefs |<--+
 // +---------------------------------+
 
-bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
-                  byte **ppbCompData, ulong *pcbCompData)
+BOOL CompressData(byte *pbData, uint32_t cbData, uint32_t cbUninitData,
+                  byte **ppbCompData, uint32_t *pcbCompData)
 {
-    long lOffset;
+    int32_t lOffset;
 
     // Allocate a temporary compression buffer.
 
     byte *pbCompBuffer = (byte *)malloc(
-            (cbData * 2) + (3 * 5) + (6 * sizeof(ulong)) + 40);   // +40 is just in case
+            (cbData * 2) + (3 * 5) + (6 * sizeof(uint32_t)) + 40);   // +40 is just in case
     byte *pbComp = pbCompBuffer;
 
-    // The first ulong in a 'data' resource is an offset to the compressed
+    // The first uint32_t in a 'data' resource is an offset to the compressed
     // CODE 1 xrefs. In PalmOS 1.0 it appears to be unused by the loader.
 
-    *(ulong *)pbComp = ReverseLong(cbData);
+    *(uint32_t *)pbComp = ReverseLong(cbData);
     pbComp += 4;
 
     //
@@ -365,7 +365,7 @@ bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
     //
     // After the PalmOS loads an application the application startup code calls
     // it back (SysAppStartup) to allocate dynamic memory for its data section,
-    // point A5 to the dynamic memory, then decompress the stored data into it.
+    // point16_t A5 to the dynamic memory, then decompress the stored data into it.
     // After allocating and initializing A5 but before decompressing
     // SysAppStartup stuffs a pointer to the app's SysAppInfo structure at the
     // location pointed to by A5.
@@ -381,8 +381,8 @@ bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
     // SysAppInfo pointer). No problem, the PalmOS DecompressData routine has
     // a facility for such things. We can't just change move the data by
     // 4 bytes though because the assembled code assumes the data is based
-    // at A5. So we include a unused dummy long of data in the Startup.inc
-    // code. Assuming the first long is unused, this code skips it and sets
+    // at A5. So we include a unused dummy int32_t of data in the Startup.inc
+    // code. Assuming the first int32_t is unused, this code skips it and sets
     // things up so the rest of the data will be decompressed from there.
     //
 
@@ -390,10 +390,10 @@ bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
     cbData -= 4;
     pbData += 4;
 
-    // The second ulong in a 'data' resource is the offset from A5
+    // The second uint32_t in a 'data' resource is the offset from A5
     // (positive or negative) that the data should be stored at.
 
-    *(ulong *)pbComp = ReverseLong(lOffset);
+    *(uint32_t *)pbComp = ReverseLong(lOffset);
     pbComp += 4;
 
     // Compress the data.
@@ -415,12 +415,12 @@ bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
 
     *pbComp++ = 0;
 
-    *(ulong *)pbComp = 0;
-    pbComp += sizeof(ulong);
+    *(uint32_t *)pbComp = 0;
+    pbComp += sizeof(uint32_t);
     *pbComp++ = 0;
 
-    *(ulong *)pbComp = 0;
-    pbComp += sizeof(ulong);
+    *(uint32_t *)pbComp = 0;
+    pbComp += sizeof(uint32_t);
     *pbComp++ = 0;
 
     // An additional six ulongs of zero
@@ -432,8 +432,8 @@ bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
 // sub-blocks in the CODE 1 xref section) contains no xrefs.  The first
 // longword in each of the six sub-blocks is a count of that sub-block's xrefs."
 
-    memset(pbComp, 0, 6 * sizeof(ulong));
-    pbComp += 6 * sizeof(ulong);
+    memset(pbComp, 0, 6 * sizeof(uint32_t));
+    pbComp += 6 * sizeof(uint32_t);
 
     // Copy the compressed results to a right-sized buffer.
 
@@ -454,18 +454,18 @@ bool CompressData(byte *pbData, ulong cbData, ulong cbUninitData,
 
 // Test bit in a 1bpp bitmap
 
-bool TestBit(int cx, int cy, byte *pb, int x, int y, int cBitsAlign)
+BOOL TestBit(int16_t cx, int16_t cy, byte *pb, int16_t x, int16_t y, int16_t cBitsAlign)
 {
-    int cbRow = (cx + (cBitsAlign - 1)) & ~(cBitsAlign - 1);
+    int16_t cbRow = (cx + (cBitsAlign - 1)) & ~(cBitsAlign - 1);
     pb += (cbRow >> 3) * y + (x >> 3);
     return (*pb & (1 << (7 - (x & 7))));
 }
 
 // Set bit in a 1bpp bitmap
 
-void SetBit(int cx, int cy, byte *pb, int x, int y, int cBitsAlign)
+void SetBit(int16_t cx, int16_t cy, byte *pb, int16_t x, int16_t y, int16_t cBitsAlign)
 {
-    int cbRow = (cx + (cBitsAlign - 1)) & ~(cBitsAlign - 1);
+    int16_t cbRow = (cx + (cBitsAlign - 1)) & ~(cBitsAlign - 1);
     pb += (cbRow >> 3) * y + (x >> 3);
     *pb |= (1 << (7 - (x & 7)));
 }
@@ -475,20 +475,20 @@ void SetBit(int cx, int cy, byte *pb, int x, int y, int cBitsAlign)
 // Pilot bitmap resource format
 
 typedef struct _Bitmap { // bm
-    ushort cx;
-    ushort cy;
-    ushort cbRow;
-    ushort ff;
-    ushort ausUnk[4];
+    uint16_t cx;
+    uint16_t cy;
+    uint16_t cbRow;
+    uint16_t ff;
+    uint16_t ausUnk[4];
     byte abBits[1];
 } Bitmap;
 
-bool ConvertBitmapResource(byte *pbResData, ResourceMapEntry *prme)
+BOOL ConvertBitmapResource(byte *pbResData, ResourceMapEntry *prme)
 {
     byte *pbSrc;
-    int cbDst, cbRow;
+    int16_t cbDst, cbRow;
     Bitmap *pbmDst;
-    int x, y;
+    int16_t x, y;
 
 #ifndef unix
     BITMAPINFO *pbmi = (BITMAPINFO *)(pbResData + sizeof(BITMAPFILEHEADER));
@@ -525,7 +525,7 @@ bool ConvertBitmapResource(byte *pbResData, ResourceMapEntry *prme)
             // pixels become background (0), black pixels become
             // foreground (1)).
 
-            int yT = y;
+            int16_t yT = y;
             if (pbmi->bmiHeader.biHeight > 0)
                 yT = pbmi->bmiHeader.biHeight - y - 1;
 
@@ -569,7 +569,7 @@ bool ConvertBitmapResource(byte *pbResData, ResourceMapEntry *prme)
 // - Compresses 'data' resource
 // - Converts 'WBMP' resources to either 'tBMP' or 'tAIB'
 
-bool ConvertResource(ulong ulTypeOriginal, byte *pbResData,
+BOOL ConvertResource(uint32_t ulTypeOriginal, byte *pbResData,
                      ResourceMapEntry *prme)
 {
     switch (ulTypeOriginal) {

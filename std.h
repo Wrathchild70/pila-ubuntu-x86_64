@@ -1,7 +1,7 @@
 #ifndef __STD_H__
 #define __STD_H__
 
-typedef int BOOL;
+typedef int16_t BOOL;
 #define fTrue 1
 #define fFalse 0
 #define VOID void

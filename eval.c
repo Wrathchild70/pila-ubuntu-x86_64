@@ -29,7 +29,7 @@
  *		char *p;
  *		long	*valuePtr;
  *		char *refPtr;
- *		int *errorPtr;
+ *		int16_t *errorPtr;
  *
  *	Errors: ASCII_TOO_BIG
  *		DIV_BY_ZERO
@@ -61,18 +61,18 @@ extern char gfPass2;
 
 #define STACKMAX 5
 
-char *eval(char *p, long *valuePtr, char *refPtr, int *errorPtr)
+char *eval(char *p, int32_t *valuePtr, char *refPtr, int16_t *errorPtr)
 {
-    long    valStack[STACKMAX];
+    int32_t    valStack[STACKMAX];
     char    opStack[STACKMAX-1];
-    int valPtr = 0;
-    int opPtr = 0;
-    long    t;
-    int prec;
-    long    i;
+    int16_t valPtr = 0;
+    int16_t opPtr = 0;
+    int32_t    t;
+    int16_t prec;
+    int32_t    i;
     char    evaluate, backRef;
-    int status;
-
+    int16_t status;
+	char *start = p;
     ClearSymContext();
 
     /*	printf("EVAL: Input string is \"%s\"\n", p); */
@@ -110,7 +110,7 @@ char *eval(char *p, long *valuePtr, char *refPtr, int *errorPtr)
             for (i = 0; i < valPtr || i < opPtr; i++) {
                 printf("%2d: ", i);
                 if (i < valPtr)
-                printf("%10d ", valStack[i]);
+                printf("%08X ", valStack[i]);
                 else
                 printf("           ");
                 if (i < opPtr)
@@ -167,9 +167,9 @@ char *eval(char *p, long *valuePtr, char *refPtr, int *errorPtr)
             else
                 *valuePtr = 0;
             /*			printf("EVAL: The expression is \"");
-                while (start < p)
-                    putchar(*start++);
-                printf("\"\n"); */
+            while (start < p)
+                putchar(*start++);
+            printf("\" (%08X)\n", *valuePtr); */
             return p;
         } else {
             /* Otherwise report the syntax error */
@@ -177,12 +177,11 @@ char *eval(char *p, long *valuePtr, char *refPtr, int *errorPtr)
             return NULL;
         }
 
-        /*		printf("Operator processed - stack contains (bottom to top):\n")
-        ;
+        /*		printf("Operator processed - stack contains (bottom to top):\n");
             for (i = 0; i < valPtr || i < opPtr; i++) {
                 printf("%2d: ", i);
                 if (i < valPtr)
-                printf("%10d ", valStack[i]);
+                printf("%08X ", valStack[i]);
                 else
                 printf("           ");
                 if (i < opPtr)
@@ -194,16 +193,16 @@ char *eval(char *p, long *valuePtr, char *refPtr, int *errorPtr)
 }
 
 
-char *evalNumber(char *p, long *numberPtr, char *refPtr, int *errorPtr)
+char *evalNumber(char *p, int32_t *numberPtr, char *refPtr, int16_t *errorPtr)
 {
-    int status;
-    long    base;
-    long    x;
+    int16_t status;
+    int32_t    base;
+    int32_t    x;
     char    name[SIGCHARS+1];
-    symbolDef *symbol, *lookup();
-    int i;
+    symbolDef *symbol;
+    int16_t i;
     char    endFlag;
-    int ch;
+    int16_t ch;
 
     *refPtr = TRUE;
 
@@ -248,7 +247,7 @@ char *evalNumber(char *p, long *numberPtr, char *refPtr, int *errorPtr)
            found. (At least one hex digit is present.) */
         x = 0;
         while (isxdigit(*++p)) {
-            if ((unsigned long)x > (unsigned long)LONGLIMIT/16)
+            if ((uint32_t)x > (uint32_t)LONGLIMIT/16)
                 NEWERROR(*errorPtr, NUMBER_TOO_BIG);
             ch = toupper(*p);
             if (ch > '9')
@@ -280,11 +279,11 @@ char *evalNumber(char *p, long *numberPtr, char *refPtr, int *errorPtr)
         x = 0;
         /* Convert the digits into an integer */
         while (*p >= '0' && *p < '0' + base) {
-            if ((unsigned long)x > (LONGLIMIT - (*p - '0')) / base) {
+            if ((uint32_t)x > (LONGLIMIT - (*p - '0')) / base) {
                 NEWERROR(*errorPtr, NUMBER_TOO_BIG);
                 //		printf ("number is too big\n");
             }
-            x = (long) ( (long) ((long) base * x) + (long) (*p - '0') );
+            x = (int32_t) ( (int32_t) ((int32_t) base * x) + (int32_t) (*p - '0') );
             p++;
         }
         *numberPtr = x;
@@ -361,18 +360,24 @@ char *evalNumber(char *p, long *numberPtr, char *refPtr, int *errorPtr)
                      *p == '?' || *p == '@');
 
             name[i] = '\0';
-            if (!FLookupSymCb(name, numberPtr))
+            if (!FLookupSymCb(name, &ch))
                 ErrorLine("Unknown symbol for sizeof");
-            if (gfPass2)
+            *numberPtr = (int32_t)ch;
+            if (gfPass2) {
                 *refPtr = kfSymBackRef;
+                /* printf("EvalNumber: SymCb '%s' = %08X\n", name, *numberPtr); */
+            }
             if (*p != ')')
                 ErrorLine(") expected");
             p++;
             return p;
         }
-        if (FLookupSym(name, numberPtr)) {
-            if (gfPass2)
+        if (FLookupSym(name, &ch)) {
+            *numberPtr = (int32_t)ch;
+            if (gfPass2) {
                 *refPtr = kfSymBackRef;
+                /* printf("EvalNumber: Sym '%s' = %08X\n", name, *numberPtr); */
+            }
             return p;
         }
 
@@ -384,10 +389,11 @@ char *evalNumber(char *p, long *numberPtr, char *refPtr, int *errorPtr)
                list symbol, then return its value */
             if (!(symbol->flags & kfSymRegisterList)) {
                 *numberPtr = symbol->value;
-                /*				printf("The value of the symbol \"%s\" is %08lX\n",
-                            name, *numberPtr); */
-                if (gfPass2)
+                if (gfPass2) {
+                    /* printf("The value of the symbol \"%s\" is %08X\n",
+                        name, *numberPtr); */
                     *refPtr = (symbol->flags & kfSymBackRef);
+                }
             } else {
                 /* If it is a register list symbol, return error */
                 *numberPtr = 0;
@@ -414,7 +420,7 @@ char *evalNumber(char *p, long *numberPtr, char *refPtr, int *errorPtr)
 
 
 
-int precedence(char op)
+int16_t precedence(char op)
 {
     /* Compute the precedence of an operator. Higher numbers indicate
        higher precedence, e.g., precedence('*') > precedence('+').
@@ -441,7 +447,7 @@ int precedence(char op)
 
 
 
-int doOp(long val1, long val2, char op, long *result)
+int16_t doOp(int32_t val1, int32_t val2, char op, int32_t *result)
 {
 
     /* Performs the operation of the operator on the two operands.

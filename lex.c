@@ -15,7 +15,7 @@
 #include "lex.h"
 
 
-int wBaseCur = 10;
+int16_t wBaseCur = 10;
 
 char *pchLexBuf;
 char *pchLexPrev;
@@ -68,7 +68,7 @@ BOOL FSkipWhite()
     return (*pchLex != '\000');
 }
 
-BOOL FParseHex(LEX *plex, int ch)
+BOOL FParseHex(LEX *plex, int16_t ch)
 {
     LEX lex;
     char *pchStore;
@@ -108,11 +108,11 @@ BOOL FParseHex(LEX *plex, int ch)
     return fFalse;
 }
 
-BOOL FParseConst(LEX *plex, int ch)
+BOOL FParseConst(LEX *plex, int16_t ch)
 {
     LEX lex;
     char *pchSav;
-    extern int wBaseCur;
+    extern int16_t wBaseCur;
     char *pchStore;
 
 
@@ -148,13 +148,13 @@ BOOL FParseConst(LEX *plex, int ch)
     return fFalse;
 }
 
-BOOL FParseId(LEX *plex, int ch)
+BOOL FParseId(LEX *plex, int16_t ch)
 {
     LEX lex;
 
     if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_') {
         // Identifier
-        int cch;
+        int16_t cch;
 
         lex.lt = ltId;
         cch = 0;
@@ -196,7 +196,7 @@ BOOL FGetLexUntilRgch(LEX *plex, char *szTerm)
 
 BOOL FGetLex(LEX *plex)
 {
-    int ch;
+    int16_t ch;
     char szT[2];
     LEX lex;
     char *pchSav;
@@ -261,7 +261,7 @@ BOOL FGetLex(LEX *plex)
         pchStore = lex.szId;
         while (*pchLex != '"') {
             if (*pchLex == '\\') {
-                int ch;
+                int16_t ch;
 
                 pchLex++;
                 ch = *pchLex++;

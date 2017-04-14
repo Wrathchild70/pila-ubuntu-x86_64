@@ -403,7 +403,7 @@ endproc
 
 ; Form resource
 
-        res 'tFRM', kidfMain, "tfrm03e8.bin"
+        res 'tFRM', kidfMain, "tFRM03e8.bin"
 
 ; Version resource
 
@@ -412,11 +412,11 @@ endproc
 
 ; Menu resource
 
-        res 'MBAR', kidmMain, "mbar03e8.bin"
+        res 'MBAR', kidmMain, "MBAR03e8.bin"
 
 ; Alert resources
 
-        res 'Talt', kidrAboutAlert, "talt03e8.bin"
-        res 'Talt', kidrInputErrorAlert, "talt03e9.bin"
-        res 'Talt', kidrRangeErrorAlert, "talt03ea.bin"
+        res 'Talt', kidrAboutAlert, "Talt03e8.bin"
+        res 'Talt', kidrInputErrorAlert, "Talt03e9.bin"
+        res 'Talt', kidrRangeErrorAlert, "Talt03ea.bin"
 

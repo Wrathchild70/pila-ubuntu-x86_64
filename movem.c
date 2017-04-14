@@ -24,14 +24,14 @@
  *		in *errorPtr by the standard mechanism.
  *
  *	 Usage:	movem(size, label, op, errorPtr)
- *		int size;
+ *		int16_t size;
  *		char *label, *op;
- *		int *errorPtr;
+ *		int16_t *errorPtr;
  *
  *		reg(size, label, op, errorPtr)
- *		int size;
+ *		int16_t size;
  *		char *label, *op;
- *		int *errorPtr;
+ *		int16_t *errorPtr;
  *
  *      Author: Paul McKee
  *		ECE492    North Carolina State University
@@ -50,16 +50,16 @@
 #define SourceModes (ControlAlt | AnIndPost | PCDisp | PCIndex)
 
 
-extern long gulOutLoc;
+extern int32_t gulOutLoc;
 extern char gfPass2;
 
 
 
-int movem(int size, char *label, char *op, int *errorPtr)
+int16_t movem(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
     char *p, *opParse();
-    int status;
-    unsigned short regList, temp, instMask;
+    int16_t status;
+    uint16_t regList, temp, instMask;
     char i;
     opDescriptor memOp;
 
@@ -90,7 +90,7 @@ int movem(int size, char *label, char *op, int *errorPtr)
             if (memOp.mode & DestModes) {
                 /* It's good, now generate the instruction */
                 if (gfPass2) {
-                    output((long int) (instMask | effAddr(&memOp)), WORD);
+                    output((int32_t) (instMask | effAddr(&memOp)), WORD);
                     gulOutLoc += 2;
                     /* If the addressing mode is address
                        register indirect with predecrement,
@@ -105,7 +105,7 @@ int movem(int size, char *label, char *op, int *errorPtr)
                             temp >>= 1;
                         }
                     }
-                    output((long) regList, WORD);
+                    output((int32_t) regList, WORD);
                     gulOutLoc += 2;
                 } else
                     gulOutLoc += 4;
@@ -133,9 +133,9 @@ int movem(int size, char *label, char *op, int *errorPtr)
                 /* Everything's OK, now build the instruction */
 
                 if (gfPass2) {
-                    output((long) (instMask | 0x0400 | effAddr(&memOp)), WORD);
+                    output((int32_t) (instMask | 0x0400 | effAddr(&memOp)), WORD);
                     gulOutLoc += 2;
-                    output((long) (regList), WORD);
+                    output((int32_t) (regList), WORD);
                     gulOutLoc += 2;
                 } else
                     gulOutLoc += 4;
@@ -156,11 +156,11 @@ int movem(int size, char *label, char *op, int *errorPtr)
 }
 
 
-int reg(int size, char *label, char *op, int *errorPtr)
+int16_t reg(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    int status;
+    int16_t status;
     symbolDef *symbol;
-    unsigned short regList;
+    uint16_t regList;
 
     if (size)
         NEWERROR(*errorPtr, INV_SIZE_CODE);
@@ -174,7 +174,7 @@ int reg(int size, char *label, char *op, int *errorPtr)
             NEWERROR(*errorPtr, LABEL_REQUIRED);
         } else {
             status = OK;
-            symbol = define(label, (long) regList, gfPass2, &status);
+            symbol = define(label, (int32_t) regList, gfPass2, &status);
             NEWERROR(*errorPtr, status);
             if (status < ERROR_RANGE)
                 symbol->flags |= kfSymRegisterList;
@@ -192,14 +192,14 @@ int reg(int size, char *label, char *op, int *errorPtr)
 
 
 
-char *evalList(char *p, unsigned short *listPtr, int *errorPtr)
+char *evalList(char *p, uint16_t *listPtr, int16_t *errorPtr)
 {
     char reg1, reg2, r;
-    unsigned short regList;
+    uint16_t regList;
     char symName[SIGCHARS+1];
     char i;
-    symbolDef *symbol, *lookup();
-    int status;
+    symbolDef *symbol;
+    int16_t status;
     char szT[256];
     char *pOrig;
 
@@ -299,7 +299,7 @@ char *evalList(char *p, unsigned short *listPtr, int *errorPtr)
                 NEWERROR(*errorPtr, REG_LIST_UNDEF);
             } else {
                 if (symbol->flags & kfSymRegisterList)
-                    *listPtr = (unsigned short)symbol->value;
+                    *listPtr = (ushort)symbol->value;
                 else {
                     NEWERROR(*errorPtr, NOT_REG_LIST);
                     *listPtr = 0x1234;

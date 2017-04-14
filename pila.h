@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
-#ifdef 0 /* DPN */
+#if 0 /* DPN */
 #include <Windows.h>
 #endif
 

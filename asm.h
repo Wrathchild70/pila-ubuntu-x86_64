@@ -13,12 +13,14 @@
 #ifndef __ASM_H__
 #define __ASM_H__
 
+#include <stdint.h>
+
 /* global flags */
 #define CASE_SENSITIVE
 
 /* Status values */
 
-/* These status values are 12 bits long with
+/* These status values are 12 bits int32_t with
    a severity code in the upper 4 bits */
 
 #define OK              0x00
@@ -83,8 +85,8 @@
 
 /* Structure for operand descriptors */
 typedef struct {
-    long int mode;  /* Mode number (see below) */
-    long int data;  /* Immediate value, displacement, or absolute address */
+    int32_t mode;  /* Mode number (see below) */
+    int32_t data;  /* Immediate value, displacement, or absolute address */
 
     char reg;   /* Principal register number (0-7) */
     char index; /* Index register number (0-7 = D0-D7, 8-15 = A0-A7) */
@@ -95,7 +97,7 @@ typedef struct {
 
 /* Structure for a symbol table entry */
 typedef struct symbolEntry {
-    long int value;         /* 32-bit value of the symbol */
+    int32_t value;         /* 32-bit value of the symbol */
     struct symbolEntry *next;   /* Pointer to next symbol in linked list */
     char flags;         /* Flags (see below) */
     char name[SIGCHARS+1];      /* Name */
@@ -115,14 +117,14 @@ typedef struct symbolEntry {
 /* Structure to describe one "flavor" of an instruction */
 
 typedef struct {
-    long int source,        /* Bit masks for the legal source...        */
+    int32_t source,        /* Bit masks for the legal source...        */
     dest;       /*  and destination addressing modes    */
     char sizes;     /* Bit mask for the legal sizes */
-    int (*exec)(int, int, opDescriptor *, opDescriptor *, int *);
+    int16_t (*exec)(int16_t, int16_t, opDescriptor *, opDescriptor *, int16_t *);
     /* Pointer to routine to build the instruction */
-    short int bytemask, /* Skeleton instruction masks for byte size...  */
+    int16_t bytemask, /* Skeleton instruction masks for byte size...  */
     wordmask, /*  word size, ...                                */
-    longmask; /*  and long sizes of the instruction             */
+    longmask; /*  and int32_t sizes of the instruction             */
 } flavor;
 
 
@@ -133,7 +135,7 @@ typedef struct {
     flavor *flavorPtr;  /* Pointer to flavor list */
     char flavorCount;   /* Number of flavors in flavor list */
     char parseFlag;     /* Should assemble() parse the operands? */
-    int (*exec)(int, char *, char *, int *);
+    int16_t (*exec)(int16_t, char *, char *, int16_t *);
     /* Routine to be called if parseFlag is FALSE */
 } instruction;
 
@@ -162,10 +164,10 @@ typedef struct {
 
 /* Register and operation size codes/bitmasks */
 
-#define BYTE    ((int) 1)
-#define WORD    ((int) 2)
-#define LONG    ((int) 4)
-#define SHORT   ((int) 8)
+#define BYTE    ((int16_t) 1)
+#define WORD    ((int16_t) 2)
+#define LONG    ((int16_t) 4)
+#define SHORT   ((int16_t) 8)
 
 
 /* added for PC port -- 7/8/1988 */
@@ -184,7 +186,7 @@ typedef struct {
 
 //
 
-typedef int BlockType;  // bt
+typedef int16_t BlockType;  // bt
 #define kbtCode         ((BlockType)1)
 #define kbtData         ((BlockType)2)
 #define kbtResource     ((BlockType)3)
@@ -193,10 +195,10 @@ typedef int BlockType;  // bt
 // Global variables
 
 extern BlockType gbt;       // type of block (code, data, etc) being assembled
-extern long gulCodeLoc;     // output location for next code byte
-extern long gulDataLoc;     // output location for next data byte
-extern long gulResLoc;      // output location for next resource byte
-extern long gcbResTotal;    // total size of all resources
+extern int32_t gulCodeLoc;     // output location for next code byte
+extern int32_t gulDataLoc;     // output location for next data byte
+extern int32_t gulResLoc;      // output location for next resource byte
+extern int32_t gcbResTotal;    // total size of all resources
 
 #define kcbCodeMax      (2 << 18)
 #define kcbDataMax      (2 << 16)
@@ -207,14 +209,14 @@ extern unsigned char *gpbData;
 extern unsigned char *gpbResource;
 extern unsigned char *gpbOutput;
 
-extern unsigned long gfcResType;
-extern long gidRes;
-extern int gfDebugOutput;
-extern int gfListOn;
-extern int gfListing;
+extern uint32_t gfcResType;
+extern int32_t gidRes;
+extern int16_t gfDebugOutput;
+extern int16_t gfListOn;
+extern int16_t gfListing;
 
 struct SourceStackEntry {
-    int iLineNum;
+    int16_t iLineNum;
     char szFile[_MAX_PATH];
     FILE *pfil;
 };

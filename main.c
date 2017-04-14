@@ -9,7 +9,7 @@
  *		assembly, then closes all files.
  *
  *	 Usage: main(argc, argv);
- *		int argc;
+ *		int16_t argc;
  *		char *argv[];
  *
  *      Author: Paul McKee
@@ -25,24 +25,24 @@
 
 extern FILE *gpfilList; /* List file */
 extern char line[256];  /* Source line */
-extern int errorCount, warningCount;    /* Number of errors and warnings */
+extern int16_t errorCount, warningCount;    /* Number of errors and warnings */
 
 extern char cexFlag;    /* True is Constants are to be EXpanded */
 
-int gfDebugOutput = FALSE;
-int gfResourcesOnly = FALSE;
-int gfEmitProcSymbols = FALSE;
-int gfListOn = FALSE;
+int16_t gfDebugOutput = FALSE;
+int16_t gfResourcesOnly = FALSE;
+int16_t gfEmitProcSymbols = FALSE;
+int16_t gfListOn = FALSE;
 char gszAppName[_MAX_PATH];
 FourCC gfcPrcType = 'appl';
 
-int main(int argc, char *argv[])
+int16_t main(int16_t argc, char *argv[])
 {
-    extern int SetArgFlags(char **apszArgs, int cpszArgs);
-    extern long gcbDataCompressed;
+    extern int16_t SetArgFlags(char **apszArgs, int16_t cpszArgs);
+    extern int32_t gcbDataCompressed;
     char pszFile[_MAX_PATH], outName[_MAX_PATH], *p;
-    int i;
-    long cbRes, cbPrc;
+    int16_t i;
+    int32_t cbRes, cbPrc;
     char szErrors[80];
 
     puts("Pila 1.0 Beta 3\n");
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
     InitSym();
     processFile(pszFile);
 
-    /* Close files and print error and warning counts */
+    /* Close files and print16_t error and warning counts */
 
     //PopSourceFile();
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 
 // Uppercase everything that isn't inside of single or double quotes
 
-int strcap(char *d, char *s)
+int16_t strcap(char *d, char *s)
 {
     char capFlag;
 
@@ -155,9 +155,9 @@ char *skipSpace(char *p)
     return p;
 }
 
-int SetArgFlags(char **apszArgs, int cpszArgs)
+int16_t SetArgFlags(char **apszArgs, int16_t cpszArgs)
 {
-    int i;
+    int16_t i;
     for (i = 1; i < cpszArgs && apszArgs[i][0] == '-'; i++) {
         char ch;
         char *pszArg = apszArgs[i] + 1, *pch;
@@ -207,7 +207,7 @@ int SetArgFlags(char **apszArgs, int cpszArgs)
                     return 0;
                 }
 
-                gfcPrcType = ReverseLong(*(ulong *)pch);
+                gfcPrcType = ReverseLong(*(uint32_t *)pch);
                 break;
 
             default:
@@ -228,7 +228,7 @@ int SetArgFlags(char **apszArgs, int cpszArgs)
  *
  *********************************************************************/
 
-int help()
+int16_t help()
 {
     puts("Usage: pila [-cldrs] [-t TYPE] infile.ext\n");
     puts("Options: -c  Show full constant expansions for DC directives");

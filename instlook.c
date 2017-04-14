@@ -22,7 +22,7 @@
  *		char *p;
  *		instruction *(*instPtrPtr);
  *		char *sizePtr;
- *		int *errorPtr;
+ *		int16_t *errorPtr;
  *
  *	Errors: SYNTAX
  *		INV_OPCODE
@@ -41,18 +41,18 @@
 
 
 extern instruction instTable[];
-extern int tableSize;
+extern int16_t tableSize;
 
 
 char *instLookup(p, instPtrPtr, sizePtr, errorPtr)
 char *p;
 instruction *(*instPtrPtr);
 char *sizePtr;
-int *errorPtr;
+int16_t *errorPtr;
 {
     char opcode[8];
-    int ch;
-    int i, hi, lo, mid, cmp;
+    int16_t ch;
+    int16_t i, hi, lo, mid, cmp;
 
     /*	printf("InstLookup: Input string is \"%s\"\n", p); */
     i = 0;

@@ -4,21 +4,21 @@
 #include "std.h"
 
 
-int DxCalcExtent(unsigned char *sz, BOOL fBold);
-int DxCalcRgdx(unsigned char *sz, BOOL fBold, int *rgdx);
+int16_t DxCalcExtent(unsigned char *sz, BOOL fBold);
+int16_t DxCalcRgdx(unsigned char *sz, BOOL fBold, int16_t *rgdx);
 VOID Error(char *sz);
 VOID Error2(char *sz1, char *sz2);
 void ErrorLine(char *sz);
 
 
-void SwapBytes(void *pv, int cb);
+void SwapBytes(void *pv, int16_t cb);
 void SwapLong(void *pl);
 void SwapStruct(void *pv, char *szPic);
 VOID OpenOutput(char *szBase);
 VOID CloseOutput();
-void DumpBytes(void *pv, int cb);
+void DumpBytes(void *pv, int16_t cb);
 void PadWordBoundary();
-int IbOut();
+int16_t IbOut();
 VOID SetOutFileDir(char *sz);
 
 extern char rgbZero[];

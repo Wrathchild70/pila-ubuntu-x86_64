@@ -842,4 +842,4 @@ instruction instTable[] = {
 
 /* Declare a global variable containing the size of the instruction table */
 
-short int tableSize = sizeof(instTable)/sizeof(instruction);
+int16_t tableSize = sizeof(instTable)/sizeof(instruction);

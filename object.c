@@ -8,7 +8,7 @@
 #include "asm.h"
 #include "prc.h"
 
-int outputObj(long lOutLoc, long data, int size)
+int16_t outputObj(int32_t lOutLoc, int32_t data, int16_t size)
 {
     unsigned char *pbOutput = gpbOutput + lOutLoc;
     switch (size) {
@@ -17,11 +17,11 @@ int outputObj(long lOutLoc, long data, int size)
         break;
 
     case WORD:
-        *(unsigned short *)pbOutput = SwapBytes((unsigned short)data);
+        *(uint16_t *)pbOutput = SwapBytes((ushort)data);
         break;
 
     case LONG:
-        *(unsigned long *)pbOutput = ReverseLong((unsigned long)data);
+        *(uint32_t *)pbOutput = ReverseLong((uint32_t)data);
         break;
     }
 

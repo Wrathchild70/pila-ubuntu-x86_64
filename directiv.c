@@ -8,9 +8,9 @@
  *		calling sequence:
  *
  *		    general_name(size, label, op, errorPtr)
- *		    int size;
+ *		    int16_t size;
  *		    char *label, *op;
- *		    int *errorPtr;
+ *		    int16_t *errorPtr;
  *
  *		The size argument contains the size code that was
  *		specified with the instruction (using the definitions
@@ -34,7 +34,7 @@
 #include "asm.h"
 #include "prc.h"
 
-extern long gulOutLoc;
+extern int32_t gulOutLoc;
 extern char gfPass2, endFlag;
 
 extern char *listPtr;   /* Pointer to buffer where listing line is assembled
@@ -42,7 +42,7 @@ extern char *listPtr;   /* Pointer to buffer where listing line is assembled
 
 #define kcsseMax	50
 
-int gcsse = 0;
+int16_t gcsse = 0;
 struct SourceStackEntry gasse[kcsseMax];
 struct SourceStackEntry *gpsseCur;
 
@@ -54,9 +54,9 @@ struct SourceStackEntry *gpsseCur;
  *
  ***********************************************************************/
 
-int org(int size, char *label, char *op, int *errorPtr)
+int16_t org(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long    newLoc;
+    int32_t    newLoc;
     char backRef;
 
     if (size)
@@ -109,7 +109,7 @@ void EndBlock()
 
         // Write the entire resource out
 
-        AddResource(gfcResType, (unsigned short)gidRes, gpbResource,
+        AddResource(gfcResType, (ushort)gidRes, gpbResource,
                     gulOutLoc, FALSE);
         break;
     }
@@ -128,7 +128,7 @@ void EndBlock()
  *
  ***********************************************************************/
 
-int funct_end(int size, char *label, char *op, int *errorPtr)
+int16_t funct_end(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
     if (size)
         NEWERROR(*errorPtr, INV_SIZE_CODE);
@@ -146,9 +146,9 @@ int funct_end(int size, char *label, char *op, int *errorPtr)
  *
  ***********************************************************************/
 
-int equ(int size, char *label, char *op, int *errorPtr)
+int16_t equ(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long    value;
+    int32_t    value;
     char backRef;
 
     if (size)
@@ -187,10 +187,10 @@ int equ(int size, char *label, char *op, int *errorPtr)
  *
  ***********************************************************************/
 
-int set(int size, char *label, char *op, int *errorPtr)
+int16_t set(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long    value;
-    int error;
+    int32_t    value;
+    int16_t error;
     char backRef;
     symbolDef *symbol;
 
@@ -243,9 +243,9 @@ int set(int size, char *label, char *op, int *errorPtr)
  *
  ***********************************************************************/
 
-int dc(int size, char *label, char *op, int *errorPtr)
+int16_t dc(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long outVal;
+    int32_t outVal;
     char backRef;
     char string[260], *p;
 
@@ -367,9 +367,9 @@ char *collect(char *s, char *d)
  *
  ***********************************************************************/
 
-int dcb(int size, char *label, char *op, int *errorPtr)
+int16_t dcb(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long    blockSize, blockVal, i;
+    int32_t    blockSize, blockVal, i;
     char backRef;
 
     if (size == SHORT) {
@@ -430,9 +430,9 @@ int dcb(int size, char *label, char *op, int *errorPtr)
  *
  ***********************************************************************/
 
-int ds(int size, char *label, char *op, int *errorPtr)
+int16_t ds(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long blockSize;
+    int32_t blockSize;
     char backRef;
 
     if (size == SHORT) {
@@ -476,7 +476,7 @@ int ds(int size, char *label, char *op, int *errorPtr)
     // data in with the initialized data.
 
     if (gfPass2) {
-        int iblock;
+        int16_t iblock;
 
         for (iblock = 0; iblock < blockSize; iblock++)
             output(0, size);
@@ -491,7 +491,7 @@ int ds(int size, char *label, char *op, int *errorPtr)
 //
 //
 
-int CodeDirective(int size, char *label, char *op, int *errorPtr)
+int16_t CodeDirective(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
     if (size != 0)
         NEWERROR(   *errorPtr,    INV_SIZE_CODE);
@@ -515,7 +515,7 @@ int CodeDirective(int size, char *label, char *op, int *errorPtr)
 //
 //
 
-int DataDirective(int size, char *label, char *op, int *errorPtr)
+int16_t DataDirective(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
     if (size != 0)
         NEWERROR(*errorPtr, INV_SIZE_CODE);
@@ -539,7 +539,7 @@ int DataDirective(int size, char *label, char *op, int *errorPtr)
 //
 //
 
-int ResDirective(int size, char *label, char *op, int *errorPtr)
+int16_t ResDirective(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
     char szT[80];
     char backRef;
@@ -596,7 +596,7 @@ int ResDirective(int size, char *label, char *op, int *errorPtr)
         }
         fclose(pfil);
 
-        AddResource(gfcResType, (unsigned short)gidRes, gpbResource,
+        AddResource(gfcResType, (ushort)gidRes, gpbResource,
                     gulResLoc, FALSE);
 
         gbt = kbtCode;
@@ -616,7 +616,7 @@ int ResDirective(int size, char *label, char *op, int *errorPtr)
 }
 
 
-int IsExisting(const char *pszDir, const char *pszFile)
+int16_t IsExisting(const char *pszDir, const char *pszFile)
 {
     char szT[_MAX_PATH];
     FILE *pfilT;
@@ -658,11 +658,11 @@ void TruncateDir(char *pszPath)
 //
 //
 
-int IncludeDirective(int size, char *label, char *op, int *errorPtr)
+int16_t IncludeDirective(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
     char szFile[_MAX_PATH], szT[_MAX_PATH], szSearchPath[300];
     char *pszT, *pszPilaInc;
-    int cchT;
+    int16_t cchT;
 
     if (size != 0)
         NEWERROR(*errorPtr, INV_SIZE_CODE);
@@ -788,7 +788,7 @@ int IncludeDirective(int size, char *label, char *op, int *errorPtr)
 #endif
 
 lbPushIt:
-    if (PushSourceFile(szFile, errorPtr) == NULL) {
+    if (PushSourceFile(pszT, szFile, errorPtr) == NULL) {
 
         // PushSourceFile will set the ERROR if there is one
 
@@ -804,7 +804,7 @@ lbPushIt:
 }
 
 
-FILE *PushSourceFile(const char *pszNewSource, int *errorPtr)
+FILE *PushSourceFile(const char *pszSourcePath, const char *pszNewSource, int16_t *errorPtr)
 {
     struct SourceStackEntry *psse;
     char szT[_MAX_PATH];
@@ -816,7 +816,15 @@ FILE *PushSourceFile(const char *pszNewSource, int *errorPtr)
 
     psse = &gasse[gcsse];
 
+#ifndef unix
     psse->pfil = fopen(pszNewSource, "r");
+#else
+    if (pszNewSource != NULL && strlen(pszNewSource) > 0)
+        sprintf(szT, "%s/%s", pszSourcePath, pszNewSource);
+    else
+        strcpy(szT, pszSourcePath);
+    psse->pfil = fopen(szT, "r");
+#endif
     if (psse->pfil == NULL || psse->pfil == (FILE *)-1) {
         if (errorPtr != NULL)
             NEWERROR(*errorPtr, INCLUDE_OPEN_FAILED);
@@ -825,8 +833,6 @@ FILE *PushSourceFile(const char *pszNewSource, int *errorPtr)
 
 #ifndef unix
     GetFullPathName(pszNewSource, sizeof(szT), szT, NULL);
-#else
-    strcpy(szT, pszNewSource);
 #endif
 
     strcpy(psse->szFile, szT);
@@ -837,7 +843,7 @@ FILE *PushSourceFile(const char *pszNewSource, int *errorPtr)
     return gpsseCur->pfil;
 }
 
-int PopSourceFile()
+int16_t PopSourceFile()
 {
     if (--gcsse <= 0)
         return FALSE;
@@ -858,7 +864,7 @@ int PopSourceFile()
 // Handler for the "appl" directive
 //
 
-int ApplDirective(int size, char *label, char *op, int *errorPtr)
+int16_t ApplDirective(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
     extern char gszAppName[_MAX_PATH];
     extern FourCC gfcAppId;
@@ -901,9 +907,9 @@ int ApplDirective(int size, char *label, char *op, int *errorPtr)
 // Handler for the "align" directive
 //
 
-int AlignDirective(int size, char *label, char *op, int *errorPtr)
+int16_t AlignDirective(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long nAlign;
+    int32_t nAlign;
     char backRef;
 
     if (size)
@@ -942,9 +948,9 @@ int AlignDirective(int size, char *label, char *op, int *errorPtr)
 // Handler for the "list" directive
 //
 
-int ListDirective(int size, char *label, char *op, int *errorPtr)
+int16_t ListDirective(int16_t size, char *label, char *op, int16_t *errorPtr)
 {
-    long fOn;
+    int32_t fOn;
     char backRef;
 
     if (size)

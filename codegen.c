@@ -7,7 +7,7 @@
  *		Places the data whose size and value are specified onto
  *		the output stream at the current location contained in
  *		global varible gulOutLoc. That is, if a listing is being
- *		produced, it calls listObj() to print the data in the
+ *		produced, it calls listObj() to print16_t the data in the
  *		object code field of the current listing line; if an
  *		object file is being produced, it calls outputObj() to
  *		output the data in the form of S-records.
@@ -31,14 +31,14 @@
  *		return an error code by the standard mechanism.
  *
  *	 Usage: output(data, size)
- *		int data, size;
+ *		int16_t data, size;
  *
  *		effAddr(operand)
  *		opDescriptor *operand;
  *
  *		extWords(op, size, errorPtr)
  *		opDescriptor *op;
- *		int size, *errorPtr;
+ *		int16_t size, *errorPtr;
  *
  *      Author: Paul McKee
  *		ECE492    North Carolina State University
@@ -51,11 +51,11 @@
 #include "pila.h"
 #include "asm.h"
 
-extern long gulOutLoc;
+extern int32_t gulOutLoc;
 extern char gfPass2;
 extern FILE *gpfilList;
 
-int output(long data, int size)
+int16_t output(int32_t data, int16_t size)
 {
     if (gfListOn)
         listObj(data, size);
@@ -66,7 +66,7 @@ int output(long data, int size)
 }
 
 
-int effAddr(opDescriptor *operand)
+int16_t effAddr(opDescriptor *operand)
 {
     if (operand->mode == DnDirect)
         return 0x00 | operand->reg;
@@ -109,9 +109,9 @@ int effAddr(opDescriptor *operand)
 }
 
 
-int extWords(opDescriptor *op, int size, int *errorPtr)
+int16_t extWords(opDescriptor *op, int16_t size, int16_t *errorPtr)
 {
-    long    disp;
+    int32_t    disp;
 
     if (op->mode == DnDirect ||
         op->mode == AnDirect ||
@@ -134,7 +134,7 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
             disp = op->data;
             if (op->mode == PCIndex)
                 disp -= gulOutLoc;
-            output((( (int) (op->size) == LONG) ? 0x800 : 0)
+            output((( (int16_t) (op->size) == LONG) ? 0x800 : 0)
                    | (op->index << 12) | (disp & 0xFF), WORD);
             if (disp < -128 || disp > 127)
                 NEWERROR(*errorPtr, INV_DISP);

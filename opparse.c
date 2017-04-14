@@ -33,7 +33,7 @@
  *	 Usage:	char *opParse(p, d, errorPtr)
  *		char *p;
  *		opDescriptor *d;
- *		int *errorPtr;
+ *		int16_t *errorPtr;
  *
  *      Author: Paul McKee
  *		ECE492    North Carolina State University
@@ -55,13 +55,13 @@ extern char gfPass2;
 #define isTerm(c)   (isspace(c) || (c == ',') || c == '\0')
 #define isRegNum(c) ((c >= '0') && (c <= '7'))
 
-char *opParse(char *p, opDescriptor *d, int *errorPtr)
+char *opParse(char *p, opDescriptor *d, int16_t *errorPtr)
 {
     //#ifdef CASE_SENSITIVE
     char szT[256];
     //#endif
     char *pOrig;
-    int cch;
+    int16_t cch;
 
 
     /* Check for immediate mode */
@@ -244,7 +244,7 @@ char *opParse(char *p, opDescriptor *d, int *errorPtr)
     if (*errorPtr < SEVERE) {
         /* Check for absolute */
         if (isTerm(p[0])) {
-            /* Determine size of absolute address (must be long if
+            /* Determine size of absolute address (must be int32_t if
                the symbol isn't defined or if the value is too big */
             if (!d->backRef || d->data > 32767 || d->data < -32768)
                 d->mode = AbsLong;

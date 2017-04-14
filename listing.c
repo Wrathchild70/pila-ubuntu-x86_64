@@ -42,7 +42,7 @@
  *		listLoc()
  *
  *		listObj(data, size)
- *		int data, size;
+ *		int16_t data, size;
  *
  *      Author: Paul McKee
  *		ECE492    North Carolina State University
@@ -57,11 +57,11 @@
 
 
 /* Declarations of global variables */
-extern long gulOutLoc;
+extern int32_t gulOutLoc;
 extern char gfPass2, cexFlag, continuation;
 extern char line[256];
 extern FILE *gpfilList;
-extern int lineNum;
+extern int16_t lineNum;
 
 static char listData[49];      /* Buffer in which listing lines are assembled */
 
@@ -70,7 +70,7 @@ extern char *listPtr;          /* Pointer to above buffer (this pointer is
                   by equ() and set() to put specially formatted
                   information in the listing) */
 
-int initList(char *name)
+int16_t initList(char *name)
 {
 
     gpfilList = fopen(name, "w");
@@ -83,7 +83,7 @@ int initList(char *name)
 }
 
 
-int listLine()
+int16_t listLine()
 {
 
     fprintf(gpfilList, "%-41.41s", listData);
@@ -100,7 +100,7 @@ int listLine()
 }
 
 
-int listLoc()
+int16_t listLoc()
 {
     sprintf(listData, "%08lX  ", gulOutLoc);
     listPtr = listData + 10;
@@ -109,7 +109,7 @@ int listLoc()
 }
 
 
-int listObj(long data, int size)
+int16_t listObj(int32_t data, int16_t size)
 {
     if (!cexFlag && (listPtr - listData + size > 40)) {
         strcpy(listData + ((size == WORD) ? 35 : 37), "...");

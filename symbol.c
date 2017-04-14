@@ -37,11 +37,11 @@
  *
  *	 Usage:	symbolDef *lookup(sym, create, errorPtr)
  *		char *sym;
- *		int create, *errorPtr;
+ *		int16_t create, *errorPtr;
  *
  *	 	symbolDef *define(sym, value, check, errorPtr)
  *		char *sym;
- *		int value, check, *errorPtr;
+ *		int16_t value, check, *errorPtr;
  *
  *      Author: Paul McKee
  *		ECE492    North Carolina State University
@@ -62,9 +62,9 @@
 static symbolDef *htable[MAXHASH+1];
 
 
-symbolDef *lookup(char *sym, int create, int *errorPtr)
+symbolDef *lookup(char *sym, int16_t create, int16_t *errorPtr)
 {
-    int h, cmp;
+    int16_t h, cmp;
     symbolDef *s, *last, *t;
     static char initialized = FALSE;
 
@@ -129,9 +129,9 @@ symbolDef *lookup(char *sym, int create, int *errorPtr)
 }
 
 
-int hash(char *symbol)
+int16_t hash(char *symbol)
 {
-    short sum = 0;
+    int16_t sum = 0;
     while (*symbol) {
         sum += (isupper(*symbol)) ? (*symbol - 'A') : 26;
         symbol++;
@@ -141,7 +141,7 @@ int hash(char *symbol)
 }
 
 
-symbolDef *define(char *sym, long value, int check, int *errorPtr)
+symbolDef *define(char *sym, int32_t value, int16_t check, int16_t *errorPtr)
 {
     symbolDef *symbol;
 

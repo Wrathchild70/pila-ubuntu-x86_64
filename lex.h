@@ -3,7 +3,7 @@
 #define __lex__
 
 
-typedef int LT;
+typedef int16_t LT;
 
     #define ltNil     -1
 // must be same as nt's
@@ -41,7 +41,7 @@ typedef int LT;
     #define ltStr      49
 
 
-typedef int VAL;
+typedef int16_t VAL;
 
     #define cchIdMax 1024
 // LEXeme

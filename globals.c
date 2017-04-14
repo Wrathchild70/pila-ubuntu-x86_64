@@ -17,7 +17,7 @@
 
 /* General */
 
-long    gulOutLoc;      /* The assembler's location counter */
+int32_t    gulOutLoc;      /* The assembler's location counter */
 char    gfPass2;        /* Flag telling whether or not it's the second pass */
 char    endFlag;        /* Flag set when the END directive is encountered */
 
@@ -28,18 +28,18 @@ FILE *gpfilList;        /* Listing file */
 /* Listing information */
 
 char line[256];         /* Source line */
-int lineNum;            /* Source line number */
+int16_t lineNum;            /* Source line number */
 char *listPtr;          /* Pointer to buffer where a listing line is assembled */
 char continuation;      /* TRUE if the listing line is a continuation */
 
 
 /* Option flags with default values */
 
-int gfListing = FALSE;  /* True if a listing is desired */
+int16_t gfListing = FALSE;  /* True if a listing is desired */
 char cexFlag = FALSE;   /* True is Constants are to be EXpanded */
 
 
-int errorCount, warningCount;   /* Number of errors and warnings */
+int16_t errorCount, warningCount;   /* Number of errors and warnings */
 
 //
 //
@@ -47,15 +47,15 @@ int errorCount, warningCount;   /* Number of errors and warnings */
 
 BlockType gbt;
 unsigned char *gpbCode;
-long gulCodeLoc;
+int32_t gulCodeLoc;
 
 unsigned char *gpbData;
-long gulDataLoc;
+int32_t gulDataLoc;
 
 unsigned char *gpbResource;
-long gulResLoc;
-unsigned long gfcResType;
-long gidRes;
-long gcbResTotal;
+int32_t gulResLoc;
+uint32_t gfcResType;
+int32_t gidRes;
+int32_t gcbResTotal;
 
 unsigned char *gpbOutput;

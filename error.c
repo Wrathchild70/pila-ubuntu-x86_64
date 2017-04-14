@@ -12,7 +12,7 @@
  *
  *	 Usage:	printError(outFile, errorCode, lineNum)
  *		FILE *outFile;
- *		int errorCode, lineNum;
+ *		int16_t errorCode, lineNum;
  *
  *      Author: Paul McKee
  *		ECE492    North Carolina State University
@@ -28,7 +28,7 @@
 extern FILE *gpfilList;     /* Listing file */
 
 struct ErrPsz {
-    int err;
+    int16_t err;
     char *psz;
 } gaerrpsz[] = {
     { SYNTAX, "Invalid syntax"},
@@ -65,7 +65,7 @@ struct ErrPsz {
 
 
 
-int doprintError(FILE *outFile, char *pszError, char *pszWarnErr, int lineNum)
+int16_t doprintError(FILE *outFile, char *pszError, char *pszWarnErr, int16_t lineNum)
 {
     if (lineNum >= 0)
         fprintf(outFile, "%s(%d) : %s: %s\n\n", gpsseCur->szFile, lineNum,
@@ -78,10 +78,10 @@ int doprintError(FILE *outFile, char *pszError, char *pszWarnErr, int lineNum)
 
 
 
-int printError(FILE *outFile, int errorCode, int lineNum)
+int16_t printError(FILE *outFile, int16_t errorCode, int16_t lineNum)
 {
     char *pszType, *pszError;
-    int i;
+    int16_t i;
 
     pszError = "No message defined";
     for (i = 0; i < sizeof(gaerrpsz) / sizeof(struct ErrPsz); i++) {

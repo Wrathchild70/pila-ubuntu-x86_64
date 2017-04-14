@@ -41,8 +41,8 @@ EL *pelFirst;
 typedef struct _sym {
     char *sz;
     union {
-        int cb;
-        int ib;
+        int16_t cb;
+        int16_t ib;
     } u;
     BOOL fGlobal;
     BOOL fType;
@@ -129,7 +129,7 @@ RWT rgrwt[] =
 };
 
 
-char *PchFromRw(int rw)
+char *PchFromRw(int16_t rw)
 {
     RWT *prwt;
 
@@ -230,7 +230,7 @@ VOID EmitInst(char *szInst, char *szOp1, char *szOp2)
     EmitSz("\n");
 }
 
-VOID EmitW(int w)
+VOID EmitW(int16_t w)
 {
     char szT[16];
 
@@ -287,7 +287,7 @@ BOOL FGetExpectRw(RW rw)
 
 
 
-SYM *PsymAdd(SYM **ppsymFirst, char *sz, int cb)
+SYM *PsymAdd(SYM **ppsymFirst, char *sz, int16_t cb)
 {
     SYM *psym;
 
@@ -299,7 +299,7 @@ SYM *PsymAdd(SYM **ppsymFirst, char *sz, int cb)
     return psym;
 }
 
-SYM *PsymAddType(char *sz, int cb)
+SYM *PsymAddType(char *sz, int16_t cb)
 {
     SYM *psym;
 
@@ -376,10 +376,10 @@ MEM *PmemAdd(SYM *psymStruct, char *sz, char *szType)
 
 
 // opt! could set psym->cb -- for now let's walk to the leafs
-int CbFromSym(SYM *psym)
+int16_t CbFromSym(SYM *psym)
 {
     MEM *pmem;
-    int cb;
+    int16_t cb;
 
     cb = 0;
     if (psym->pmemFirst != NULL) {
@@ -407,8 +407,8 @@ typedef struct _arg {
     SYM *psymType;
     //char szSize[128];
     //BOOL fStdSize;
-    int cb;
-    int ib;
+    int16_t cb;
+    int16_t ib;
     BOOL fEA;
     BOOL fConst;
 } ARG;
@@ -417,9 +417,9 @@ typedef struct _arg {
 
 BOOL FParseArg(ARG *parg, BOOL fLocal)
 {
-    int cParen;
+    int16_t cParen;
     BOOL fLocalSize;
-    int ib;
+    int16_t ib;
 
 
     ClearSymContext();
@@ -431,7 +431,7 @@ BOOL FParseArg(ARG *parg, BOOL fLocal)
     switch (tok.lex.lt) {
     case ltId:
         if (tok.rw == rwSizeof) {
-            int cb;
+            int16_t cb;
 
             FGetExpectLt(&tok, ltLParen, "(");
             FGetExpectLt(&tok, ltId, "sizeof struct");
@@ -525,7 +525,7 @@ BOOL FParseArg(ARG *parg, BOOL fLocal)
     }
 }
 
-int ParseArgs(ARG *rgarg)
+int16_t ParseArgs(ARG *rgarg)
 {
     ARG *parg;
 
@@ -548,10 +548,10 @@ int ParseArgs(ARG *rgarg)
     return 0;
 }
 
-int EmitArgs(ARG *rgarg, int iargMac)
+int16_t EmitArgs(ARG *rgarg, int16_t iargMac)
 {
     ARG *parg;
-    int cb;
+    int16_t cb;
 
     cb = 0;
     while (iargMac--) {
@@ -595,8 +595,8 @@ int EmitArgs(ARG *rgarg, int iargMac)
 VOID ParseCall(RW rw)
 {
     char szFunc[256];
-    int cbArgs;
-    int iargMac;
+    int16_t cbArgs;
+    int16_t iargMac;
     ARG rgarg[iargMax];
 
 
@@ -645,16 +645,16 @@ VOID ParseCall(RW rw)
 }
 
 
-int ibArgPrev;
+int16_t ibArgPrev;
 
 char gszProcId[cchIdMax];
 
 void ParseProc()
 {
-    int cbArgs;
-    int iargMac;
-    int iarg;
-    int ibArg;
+    int16_t cbArgs;
+    int16_t iargMac;
+    int16_t iarg;
+    int16_t ibArg;
     ARG rgarg[iargMax];
 
     ibArgPrev = 0;
@@ -756,10 +756,10 @@ SYM *PsymLookupScope(char *sz)
     return psym;
 }
 
-int FLookupSym(char *sz, int *pw)
+int16_t FLookupSym(char *sz, int16_t *pw)
 {
     MEM *pmem;
-    int ib;
+    int16_t ib;
 
     if (psymContext == NULL) {
         SYM *psym;
@@ -791,7 +791,7 @@ int FLookupSym(char *sz, int *pw)
     return fFalse;
 }
 
-int FLookupSymCb(char *sz, int *pcb)
+int16_t FLookupSymCb(char *sz, int16_t *pcb)
 {
     SYM *psym;
 
@@ -820,7 +820,7 @@ void ParseLocal()
         psym->psymType = arg.psymType;
 }
 
-int ibGlobal;
+int16_t ibGlobal;
 void ParseGlobal()
 {
     ARG arg;
@@ -848,7 +848,7 @@ void ParseBeginProc()
 {
     char szT[256];
     SYM *psym;
-    int ib;
+    int16_t ib;
 
     sprintf(szT, "#%d", ibArgPrev);
     EmitInst("link", "a6", szT);
@@ -862,7 +862,7 @@ void ParseBeginProc()
 
 void ParseEndProc()
 {
-    extern int gfEmitProcSymbols;
+    extern int16_t gfEmitProcSymbols;
 
     EmitInst("unlk", "a6", NULL);
     EmitInst("rts", NULL, NULL);
@@ -879,7 +879,7 @@ void ParseEndProc()
 }
 
 
-MDL MdlGetLine(char *sz, int cchMax, FILE *pfile)
+MDL MdlGetLine(char *sz, int16_t cchMax, FILE *pfile)
 {
     if (pelFirst != NULL) {
         EL *pel;
